@@ -5,6 +5,8 @@ import {
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs.js";
 import { expect } from "chai";
 
+import LockModule from "../ignition/modules/LockModule";
+
 describe("Lock", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
@@ -19,8 +21,9 @@ describe("Lock", function () {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    const { lock } = await ignition.deploy(LockModule, {
+      parameters: { Lock: { lockedAmount, unlockTime } },
+    });
 
     return { lock, unlockTime, lockedAmount, owner, otherAccount };
   }
